@@ -6,8 +6,7 @@
 #include "Drivable.generated.h"
 
 UCLASS()
-class DEJAVON_API ADrivable : public APawn
-{
+class DEJAVON_API ADrivable : public APawn {
 	GENERATED_BODY()
 
 public:
@@ -41,13 +40,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drivable", Meta = (BlueprintProtected = "true"))
 	float MaximumTurnRate;
 
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual class UPawnMovementComponent* GetMovementComponent() const override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* DrivableMesh;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* DrivableSpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* DrivableCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
+	class UDrivableMovementComponent* DrivableMovement;
 };
