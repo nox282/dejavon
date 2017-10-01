@@ -4,7 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "DrivableMovementComponent.h"
+#include "DrivableBehaviorsComponent.h"
 
 // Sets default values
 ADrivable::ADrivable() {
@@ -28,8 +28,7 @@ ADrivable::ADrivable() {
 	DrivableCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DrivableCamera"));
 	DrivableCamera->SetupAttachment(DrivableSpringArm, USpringArmComponent::SocketName);
 
-	DrivableMovement = CreateDefaultSubobject<UDrivableMovementComponent>(TEXT("DrivableMovement"));
-	GetMovementComponent()->UpdatedComponent = RootComponent;
+	DrivableBehaviors = CreateDefaultSubobject<UDrivableBehaviorsComponent>(TEXT("DrivableBehaviors"));
 }
 
 // Called when the game starts or when spawned
@@ -43,29 +42,32 @@ void ADrivable::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 }
 
-UPawnMovementComponent* ADrivable::GetMovementComponent() const {
-	return DrivableMovement;
+UDrivableBehaviorsComponent* ADrivable::GetBehaviorsComponent() const {
+	return DrivableBehaviors;
 }
 
 void ADrivable::MoveForward(float ThrottleInput) {
-	if (GetMovementComponent() && (GetMovementComponent()->UpdatedComponent == RootComponent)) {
-		if (ThrottleInput >= 0)
-			GetMovementComponent()->AddInputVector(GetActorForwardVector() * ThrottleInput* Horsepower);
+	if (GetBehaviorsComponent()) {
+		if (ThrottleInput > 0)
+			GetBehaviorsComponent()->Gas(ThrottleInput);
+		else if (ThrottleInput < 0)
+			GetBehaviorsComponent()->Brake(ThrottleInput);
 		else
-			GetMovementComponent()->AddInputVector(GetActorForwardVector() * ThrottleInput* (Brakepower));
+			GetBehaviorsComponent()->EngineBrake();
 	}
 }
 
 void ADrivable::TurnRight(float SteeringInput) {
-	FRotator NewRotation = GetActorRotation();
-	NewRotation.Yaw += SteeringInput;
-	SetActorRotation(NewRotation);
+	if (GetBehaviorsComponent())
+		GetBehaviorsComponent()->AddSteeringLock(SteeringInput);
 }
 
 void ADrivable::EngageEBrake() {
-	UE_LOG(LogTemp, Warning, TEXT("Engaging EBrake"));
+	if (GetBehaviorsComponent())
+		GetBehaviorsComponent()->PullEbrake();
 }
 
 void ADrivable::ReleaseEBrake() {
-	UE_LOG(LogTemp, Warning, TEXT("Disengaging EBrake"));
+	if (GetBehaviorsComponent())
+		GetBehaviorsComponent()->ReleaseEBrake();
 }

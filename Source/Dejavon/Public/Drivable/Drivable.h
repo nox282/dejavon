@@ -17,18 +17,22 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
-	void MoveForward(float ThrottleInput);
+	virtual void MoveForward(float ThrottleInput);
 
 	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
-	void TurnRight(float SteeringInput);
+	virtual void TurnRight(float SteeringInput);
 
 	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
-	void EngageEBrake();
+	virtual void EngageEBrake();
 
 	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
-	void ReleaseEBrake();
+	virtual void ReleaseEBrake();
 
 	FORCEINLINE class UStaticMeshComponent* GetDrivableMesh() const { return DrivableMesh; }
+
+	FORCEINLINE float GetHorsepower() { return Horsepower; }
+	FORCEINLINE float GetBrakepower() { return Brakepower; }
+	FORCEINLINE float GetMaximumTurnRate() { return MaximumTurnRate; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drivable", Meta = (BlueprintProtected = "true"))
@@ -43,7 +47,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual class UPawnMovementComponent* GetMovementComponent() const override;
+	virtual class UDrivableBehaviorsComponent* GetBehaviorsComponent() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
@@ -56,5 +60,5 @@ private:
 	class UCameraComponent* DrivableCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
-	class UDrivableMovementComponent* DrivableMovement;
+	class UDrivableBehaviorsComponent* DrivableBehaviors;
 };

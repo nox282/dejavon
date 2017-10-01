@@ -2,6 +2,12 @@
 
 #include "DrivableMovementComponent.h"
 
+UDrivableMovementComponent::UDrivableMovementComponent() {	
+	MaxWorldSpeed = 1000.0f;
+	StandardFriction = 10.0f;
+}
+
+
 void UDrivableMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -11,8 +17,7 @@ void UDrivableMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	}
 
 	// Get (and then clear) the movement vector that we set in ACollidingPawn::Tick
-	FVector DesiredMovementThisFrame = ConsumeInputVector().GetClampedToMaxSize(1.0f) * DeltaTime * 150.0f;
-	//UE_LOG(LogTemp, Warning, TEXT("desired movement : %s"), *DesiredMovementThisFrame.ToString());
+	FVector DesiredMovementThisFrame = GetThisFrameMovementVector(DeltaTime);
 	if (!DesiredMovementThisFrame.IsNearlyZero()) {
 		FHitResult Hit;
 		SafeMoveUpdatedComponent(DesiredMovementThisFrame, UpdatedComponent->GetComponentRotation(), true, Hit);
@@ -22,4 +27,12 @@ void UDrivableMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 			SlideAlongSurface(DesiredMovementThisFrame, 1.f - Hit.Time, Hit.Normal, Hit);
 		}
 	}
+}
+
+FVector UDrivableMovementComponent::GetThisFrameMovementVector(float DeltaTime) {
+	return GetThisFrameMovementVector(DeltaTime, StandardFriction);
+}
+
+FVector UDrivableMovementComponent::GetThisFrameMovementVector(float DeltaTime, float Friction) {
+	return ConsumeInputVector() * DeltaTime;
 }
