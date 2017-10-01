@@ -11,7 +11,7 @@ UDrivablePowerSourceComponent::UDrivablePowerSourceComponent() {
 	IdleRPM = 500;
 	Torque = 200;
 	RPMPotentialAcceleration = 20;
-	PotentionBraking = 7;
+	PotentialBraking = 7;
 }
 
 void UDrivablePowerSourceComponent::OpenThrottle(float ThrottleInput) {
@@ -45,7 +45,7 @@ void UDrivablePowerSourceComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 int32 UDrivablePowerSourceComponent::ProcessRPMCurrentAcceleration() {
 	if (RPMCurrentAcceleration == 0)
-		return -PotentionBraking;
+		return -PotentialBraking;
 	else
 		return RPMCurrentAcceleration;
 }

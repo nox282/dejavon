@@ -41,7 +41,7 @@ protected:
 	int32 RPMPotentialAcceleration;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 PotentionBraking;
+	int32 PotentialBraking;
 
 private:
 	int32 CurrentRPM;
