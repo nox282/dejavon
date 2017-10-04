@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
 	virtual void ReleaseEBrake();
 
+	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
+	virtual void ShiftUp();
+
+	UFUNCTION(BlueprintCallable, category = "Drivable Controls")
+	virtual void ShiftDown();
+
 	FORCEINLINE class UStaticMeshComponent* GetDrivableMesh() const { return DrivableMesh; }
 
 	FORCEINLINE float GetHorsepower() { return Horsepower; }
@@ -61,4 +67,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
 	class UDrivableBehaviorsComponent* DrivableBehaviors;
+
+	void HandleDrivableSpecs();
 };

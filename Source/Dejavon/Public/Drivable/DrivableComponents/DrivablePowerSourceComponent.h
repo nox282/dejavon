@@ -7,9 +7,8 @@
 #include "DrivablePowerSourceComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DEJAVON_API UDrivablePowerSourceComponent : public UActorComponent
-{
+UCLASS( ClassGroup = (DrivableComponent), Blueprintable, meta = (BlueprintSpawnableComponent) )
+class DEJAVON_API UDrivablePowerSourceComponent : public UActorComponent {
 	GENERATED_BODY()
 
 public:	
@@ -20,32 +19,28 @@ public:
 	
 	virtual void OpenThrottle(float ThrottleInput);
 	virtual void CloseThrottle();
+
 	virtual void OnBrake(float BrakeInput);
+	virtual void OnGearChange(float NewResistance);
 
 	virtual float GetPowerOutput();
+	
+	virtual void SetSpecs(class UDrivableEngineSpecs* EngineSpecs);
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 MaxRPM;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 IdleRPM;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 Torque;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 RPMPotentialAcceleration;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent", Meta = (BlueprintProtected = "true"))
-	int32 PotentialBraking;
-
 private:
+	int32 MaxRPM;
+	int32 IdleRPM;
+	int32 Torque;
+	int32 RPMPotentialAcceleration;
+	int32 PotentialBraking;
+	
 	int32 CurrentRPM;
 	int32 RPMCurrentAcceleration;
+	float Resistance;
 
 	int32 ProcessRPMCurrentAcceleration();
 	int32 ProcessCurrentRPM(int32 ThisFrameRPMAcceleration);

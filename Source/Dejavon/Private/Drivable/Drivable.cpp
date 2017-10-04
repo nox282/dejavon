@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "DrivableBehaviorsComponent.h"
+#include "DrivableConfig/DrivableEngineSpecs.h"
+#include "DrivableConfig/DrivableTransmissionSpecs.h"
 
 // Sets default values
 ADrivable::ADrivable() {
@@ -27,14 +29,26 @@ ADrivable::ADrivable() {
 	// Create a camera and attach to our spring arm
 	DrivableCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DrivableCamera"));
 	DrivableCamera->SetupAttachment(DrivableSpringArm, USpringArmComponent::SocketName);
+}
 
-	DrivableBehaviors = CreateDefaultSubobject<UDrivableBehaviorsComponent>(TEXT("DrivableBehaviors"));
+void ADrivable::HandleDrivableSpecs() {
+	UDrivableEngineSpecs* engineSpecs = this->FindComponentByClass<UDrivableEngineSpecs>();
+	if (engineSpecs && GetBehaviorsComponent())
+		GetBehaviorsComponent()->SetEngineSpecs(engineSpecs);
+
+	UDrivableTransmissionSpecs* transmissionSpecs = this->FindComponentByClass<UDrivableTransmissionSpecs>();
+	if (engineSpecs && GetBehaviorsComponent())
+		GetBehaviorsComponent()->SetTransmissionSpecs(transmissionSpecs);
 }
 
 // Called when the game starts or when spawned
 void ADrivable::BeginPlay() {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("I'm moving : %s"), *this->GetActorLocation().ToString());
+	DrivableBehaviors = NewObject<UDrivableBehaviorsComponent>(this, TEXT("DrivableBehaviors"));
+	DrivableBehaviors->RegisterComponent();
+	
+	if (DrivableBehaviors)
+		HandleDrivableSpecs();
 }
 
 // Called every frame
@@ -48,6 +62,7 @@ UDrivableBehaviorsComponent* ADrivable::GetBehaviorsComponent() const {
 
 void ADrivable::MoveForward(float ThrottleInput) {
 	if (GetBehaviorsComponent()) {
+
 		if (ThrottleInput > 0)
 			GetBehaviorsComponent()->Gas(ThrottleInput);
 		else if (ThrottleInput < 0)
@@ -70,4 +85,14 @@ void ADrivable::EngageEBrake() {
 void ADrivable::ReleaseEBrake() {
 	if (GetBehaviorsComponent())
 		GetBehaviorsComponent()->ReleaseEBrake();
+}
+
+void ADrivable::ShiftUp() {
+	if (GetBehaviorsComponent())
+		GetBehaviorsComponent()->ShiftUp();
+}
+
+void ADrivable::ShiftDown() {
+	if (GetBehaviorsComponent())
+		GetBehaviorsComponent()->ShiftDown();
 }

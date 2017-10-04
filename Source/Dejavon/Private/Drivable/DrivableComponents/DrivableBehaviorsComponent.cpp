@@ -3,26 +3,42 @@
 #include "DrivableBehaviorsComponent.h"
 #include "DrivableMovementComponent.h"
 #include "DrivablePowerSourceComponent.h"
+#include "DrivableTransmissionComponent.h"
 #include "Drivable.h"
 
 
 // Sets default values for this component's properties
 UDrivableBehaviorsComponent::UDrivableBehaviorsComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
+}
 
-	MovementComponent = CreateDefaultSubobject<UDrivableMovementComponent>(TEXT("DrivableBehaviors"));
-	if (GetDrivableOwner())
-		MovementComponent->UpdatedComponent = GetDrivableOwner()->GetRootComponent();
-	else
-		UE_LOG(LogTemp, Warning, TEXT("No owner"));
+void UDrivableBehaviorsComponent::SetEngineSpecs(UDrivableEngineSpecs* EngineSpecs) {
+	if (GetEngine())
+		GetEngine()->SetSpecs(EngineSpecs);
+}
 
-	Engine = CreateDefaultSubobject<UDrivablePowerSourceComponent>(TEXT("Engine"));
+void UDrivableBehaviorsComponent::SetTransmissionSpecs(UDrivableTransmissionSpecs* TransmissionSpecs) {
+	if (GetTransmission())
+		GetTransmission()->SetSpecs(TransmissionSpecs);
 }
 
 
 // Called when the game starts
 void UDrivableBehaviorsComponent::BeginPlay() {
 	Super::BeginPlay();
+
+	MovementComponent = NewObject<UDrivableMovementComponent>(this, TEXT("Movement"));
+	MovementComponent->RegisterComponent();
+	if (GetDrivableOwner())
+		MovementComponent->UpdatedComponent = GetDrivableOwner()->GetRootComponent();
+	else
+		UE_LOG(LogTemp, Warning, TEXT("No owner"));
+
+	Engine = NewObject<UDrivablePowerSourceComponent>(this, TEXT("Engine"));
+	Engine->RegisterComponent();
+
+	Transmission = NewObject<UDrivableTransmissionComponent>(this, TEXT("Transmission"));
+	Transmission->RegisterComponent();
 }
 
 
@@ -31,12 +47,13 @@ void UDrivableBehaviorsComponent::TickComponent(float DeltaTime, ELevelTick Tick
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	float engineOutput = GetEngine()->GetPowerOutput();
-	UE_LOG(LogTemp, Warning, TEXT("%f"), engineOutput);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), engineOutput);
 
 	if (GetMovementComponent() 
-		&& GetDrivableOwner() 
-		&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
-		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * engineOutput);
+			&& GetDrivableOwner()
+			&& GetTransmission()
+			&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
+		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * GetTransmission()->GetPowerOutput(engineOutput));
 	}
 }
 
@@ -54,6 +71,11 @@ UDrivableMovementComponent* UDrivableBehaviorsComponent::GetMovementComponent() 
 UDrivablePowerSourceComponent* UDrivableBehaviorsComponent::GetEngine() {
 	return Engine;
 }
+
+UDrivableTransmissionComponent* UDrivableBehaviorsComponent::GetTransmission() {
+	return Transmission;
+}
+
 
 void UDrivableBehaviorsComponent::Gas(float ThrottleInput) {
 	if (GetEngine())
@@ -80,4 +102,14 @@ void UDrivableBehaviorsComponent::PullEbrake(){
 }
 void UDrivableBehaviorsComponent::ReleaseEBrake(){
 	EngineBrake();
+}
+
+void UDrivableBehaviorsComponent::ShiftUp() {
+	if (GetTransmission())
+		GetTransmission()->GearUp();
+}
+
+void UDrivableBehaviorsComponent::ShiftDown() {
+	if (GetTransmission())
+		GetTransmission()->GearDown();
 }

@@ -1,17 +1,13 @@
 // MIT LicenseCopyright (c) 2017 Nicolas Hamard
 
 #include "DrivablePowerSourceComponent.h"
+#include "DrivableConfig/DrivableEngineSpecs.h"
 
 // Sets default values for this component's properties
 UDrivablePowerSourceComponent::UDrivablePowerSourceComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
 	CurrentRPM = 0;
-	
-	MaxRPM = 8000;
-	IdleRPM = 500;
-	Torque = 200;
-	RPMPotentialAcceleration = 20;
-	PotentialBraking = 7;
+	Resistance = 0;
 }
 
 void UDrivablePowerSourceComponent::OpenThrottle(float ThrottleInput) {
@@ -23,6 +19,10 @@ void UDrivablePowerSourceComponent::CloseThrottle() {
 
 void UDrivablePowerSourceComponent::OnBrake(float BrakeInput) {
 	RPMCurrentAcceleration = FMath::RoundHalfFromZero(RPMPotentialAcceleration * BrakeInput);
+}
+
+void UDrivablePowerSourceComponent::OnGearChange(float NewResistance) {
+	Resistance = NewResistance;
 }
 
 float UDrivablePowerSourceComponent::GetPowerOutput() {
@@ -59,4 +59,16 @@ int32 UDrivablePowerSourceComponent::ProcessCurrentRPM(int32 ThisFrameRPMAcceler
 	rpm = rpm > MaxRPM ? MaxRPM : rpm;
 
 	return rpm;
+}
+
+void UDrivablePowerSourceComponent::SetSpecs(UDrivableEngineSpecs* EngineSpecs) {
+	if (EngineSpecs) {
+		MaxRPM = EngineSpecs->MaxRPM;
+		IdleRPM = EngineSpecs->IdleRPM;
+		Torque = EngineSpecs->Torque;
+		RPMPotentialAcceleration = EngineSpecs->RPMPotentialAcceleration;
+		PotentialBraking = EngineSpecs->PotentialBraking;
+		CurrentRPM = 0;
+	} else
+		UE_LOG(LogTemp, Warning, TEXT("Engine Specs not applied (NULL)"));
 }

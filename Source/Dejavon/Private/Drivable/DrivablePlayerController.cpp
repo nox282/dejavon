@@ -54,6 +54,8 @@ void ADrivablePlayerController::SetupInputComponent() {
 	InputComponent->BindAxis("TurnRight", this, &ADrivablePlayerController::TurnRight);
 	InputComponent->BindAction("EBrake", IE_Pressed, this, &ADrivablePlayerController::EngageEBrake);
 	InputComponent->BindAction("EBrake", IE_Released, this, &ADrivablePlayerController::ReleaseEBrake);
+	InputComponent->BindAction("ShiftUp", IE_Pressed, this, &ADrivablePlayerController::ShiftUp);
+	InputComponent->BindAction("ShiftDown", IE_Pressed, this, &ADrivablePlayerController::ShiftDown);
 }
 
 void ADrivablePlayerController::MoveForward(float ThrottleInput) {
@@ -61,7 +63,6 @@ void ADrivablePlayerController::MoveForward(float ThrottleInput) {
 	if (pawn) {
 		pawn->MoveForward(ThrottleInput);
 	}
-
 }
 
 void ADrivablePlayerController::TurnRight(float SteeringInput) {
@@ -82,5 +83,19 @@ void ADrivablePlayerController::ReleaseEBrake() {
 	ADrivable* pawn = Cast<ADrivable>(this->GetPawn());
 	if (pawn) {
 		pawn->ReleaseEBrake();
+	}
+}
+
+void ADrivablePlayerController::ShiftUp() {
+	ADrivable* pawn = Cast<ADrivable>(this->GetPawn());
+	if (pawn) {
+		pawn->ShiftUp();
+	}
+}
+
+void ADrivablePlayerController::ShiftDown() {
+	ADrivable* pawn = Cast<ADrivable>(this->GetPawn());
+	if (pawn) {
+		pawn->ShiftDown();
 	}
 }

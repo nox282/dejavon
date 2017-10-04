@@ -7,7 +7,7 @@
 #include "DrivableBehaviorsComponent.generated.h"
 
 
-UCLASS()
+UCLASS( ClassGroup = (DrivableComponent), Blueprintable, meta = (BlueprintSpawnableComponent) )
 class DEJAVON_API UDrivableBehaviorsComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -21,12 +21,17 @@ public:
 
 	virtual class ADrivable* GetDrivableOwner();
 
+	virtual void SetEngineSpecs(class UDrivableEngineSpecs* EngineSpecs);
+	virtual void SetTransmissionSpecs(class UDrivableTransmissionSpecs* TransmissionSpecs);
+
 	virtual void Gas(float ThrottleInput);
 	virtual void Brake(float BrakeInput);
 	virtual void EngineBrake();
 	virtual void AddSteeringLock(float SteeringInput);
 	virtual void PullEbrake();
 	virtual void ReleaseEBrake();
+	virtual void ShiftUp();
+	virtual void ShiftDown();
 
 protected:
 	// Called when the game starts
@@ -34,6 +39,7 @@ protected:
 
 	virtual class UDrivableMovementComponent* GetMovementComponent();
 	virtual class UDrivablePowerSourceComponent* GetEngine();
+	virtual class UDrivableTransmissionComponent* GetTransmission();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
@@ -41,4 +47,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivablePowerSourceComponent* Engine;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
+	class UDrivableTransmissionComponent* Transmission;
 };

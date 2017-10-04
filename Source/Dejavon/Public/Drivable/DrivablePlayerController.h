@@ -44,4 +44,6 @@ class DEJAVON_API ADrivablePlayerController : public APlayerController
 		void TurnRight(float SteeringInput);
 		void EngageEBrake();
 		void ReleaseEBrake();
+		void ShiftUp();
+		void ShiftDown();
 };
