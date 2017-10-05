@@ -46,11 +46,11 @@ void UDrivableTransmissionComponent::SetGear(int32 Gear) {
 	}
 }
 
-float UDrivableTransmissionComponent::GetPowerOutput(float EngineOutput) {
+float UDrivableTransmissionComponent::GetDriveshaftRPM(float EngineRPM) {
 	if (CanReverse && CurrentGear == -1 && GearRatios.Num() >= 1) {
-		return -(EngineOutput * GearRatios[1]);
+		return -(EngineRPM / GearRatios[1]);
 	} else if(CurrentGear < GearRatios.Num()){
-		return EngineOutput * GearRatios[CurrentGear];
+		return EngineRPM/ GearRatios[CurrentGear];
 	} else {
 		return 0.0f;
 	}
@@ -58,6 +58,18 @@ float UDrivableTransmissionComponent::GetPowerOutput(float EngineOutput) {
 
 int32 UDrivableTransmissionComponent::GetCurrentGear() {
 	return CurrentGear;
+}
+
+float UDrivableTransmissionComponent::GetCurrentGearRatio() {
+	if (CanReverse && CurrentGear == -1 && GearRatios.Num() >= 1) {
+		return -(GearRatios[1]);
+	}
+	else if (CurrentGear < GearRatios.Num()) {
+		return GearRatios[CurrentGear];
+	}
+	else {
+		return 0.0f;
+	}
 }
 
 void UDrivableTransmissionComponent::SetSpecs(UDrivableTransmissionSpecs* TransmissionSpecs) {

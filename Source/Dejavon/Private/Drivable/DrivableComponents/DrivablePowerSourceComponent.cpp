@@ -6,28 +6,39 @@
 // Sets default values for this component's properties
 UDrivablePowerSourceComponent::UDrivablePowerSourceComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
-	CurrentRPM = 0;
-	Resistance = 0;
+	CurrentRPM = IdleRPM;
+	//CurrentTorque = 0.0f;
+	CurrentGearRatio = 0.0f;
+
+	TIRE_DIAMETER = 78.74f;
+	V_MASS = 500;
 }
 
 void UDrivablePowerSourceComponent::OpenThrottle(float ThrottleInput) {
-	RPMCurrentAcceleration = FMath::RoundHalfFromZero(RPMPotentialAcceleration * ThrottleInput);
+	CurrentTorque = Torque * ThrottleInput - EngineResistance/2;
 }
 void UDrivablePowerSourceComponent::CloseThrottle() {
-	RPMCurrentAcceleration = 0;
+	CurrentTorque = - EngineResistance;
 }
 
 void UDrivablePowerSourceComponent::OnBrake(float BrakeInput) {
-	RPMCurrentAcceleration = FMath::RoundHalfFromZero(RPMPotentialAcceleration * BrakeInput);
+
+	CurrentTorque = - (Torque * -BrakeInput + EngineResistance);
 }
 
-void UDrivablePowerSourceComponent::OnGearChange(float NewResistance) {
-	Resistance = NewResistance;
+void UDrivablePowerSourceComponent::OnGearChange(float NewGearRatio, float DriveShaftRPM) {
+	float rpm = DriveShaftRPM * NewGearRatio;
+	CurrentRPM = ApplyRevLimiter(rpm);
 }
 
 float UDrivablePowerSourceComponent::GetPowerOutput() {
-	return (Torque * CurrentRPM) / 5252;
+	return (CurrentTorque * CurrentRPM) / 5252;
 }
+
+float UDrivablePowerSourceComponent::GetCurrentRPM() {
+	return CurrentRPM;
+}
+
 
 // Called when the game starts
 void UDrivablePowerSourceComponent::BeginPlay() {
@@ -38,27 +49,13 @@ void UDrivablePowerSourceComponent::BeginPlay() {
 // Called every frame
 void UDrivablePowerSourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	CurrentRPM = ProcessCurrentRPM(DeltaTime);
 
-	int32 ThisFrameRPMAcceleration = ProcessRPMCurrentAcceleration();
-	CurrentRPM = ProcessCurrentRPM(ThisFrameRPMAcceleration);
 }
 
-int32 UDrivablePowerSourceComponent::ProcessRPMCurrentAcceleration() {
-	if (RPMCurrentAcceleration == 0)
-		return -PotentialBraking;
-	else
-		return RPMCurrentAcceleration;
-}
-
-int32 UDrivablePowerSourceComponent::ProcessCurrentRPM(int32 ThisFrameRPMAcceleration) {
-	float rpm = CurrentRPM;
-
-	rpm += ThisFrameRPMAcceleration;
-
-	rpm = rpm < 0 ? 0 : rpm;
-	rpm = rpm > MaxRPM ? MaxRPM : rpm;
-
-	return rpm;
+float UDrivablePowerSourceComponent::ProcessCurrentRPM(float DeltaTime) {
+	float rpm = CurrentRPM + (CurrentTorque/V_MASS);
+	return ApplyRevLimiter(rpm);
 }
 
 void UDrivablePowerSourceComponent::SetSpecs(UDrivableEngineSpecs* EngineSpecs) {
@@ -66,9 +63,15 @@ void UDrivablePowerSourceComponent::SetSpecs(UDrivableEngineSpecs* EngineSpecs) 
 		MaxRPM = EngineSpecs->MaxRPM;
 		IdleRPM = EngineSpecs->IdleRPM;
 		Torque = EngineSpecs->Torque;
-		RPMPotentialAcceleration = EngineSpecs->RPMPotentialAcceleration;
-		PotentialBraking = EngineSpecs->PotentialBraking;
-		CurrentRPM = 0;
+		EngineResistance = EngineSpecs->EngineResistance;
+		CurrentRPM = IdleRPM;
 	} else
 		UE_LOG(LogTemp, Warning, TEXT("Engine Specs not applied (NULL)"));
+}
+
+float UDrivablePowerSourceComponent::ApplyRevLimiter(float RPM) {
+	RPM = RPM < IdleRPM ? IdleRPM : RPM;
+	RPM = RPM > MaxRPM ? MaxRPM : RPM;
+	
+	return RPM;
 }

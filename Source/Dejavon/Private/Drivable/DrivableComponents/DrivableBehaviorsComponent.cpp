@@ -46,14 +46,13 @@ void UDrivableBehaviorsComponent::BeginPlay() {
 void UDrivableBehaviorsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	float engineOutput = GetEngine()->GetPowerOutput();
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), engineOutput);
-
 	if (GetMovementComponent() 
 			&& GetDrivableOwner()
 			&& GetTransmission()
 			&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
-		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * GetTransmission()->GetPowerOutput(engineOutput));
+		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
+		UE_LOG(LogTemp, Warning, TEXT("DriveShaftRPM: %f"), driveShaftRPM);
+		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM);
 	}
 }
 
@@ -104,12 +103,27 @@ void UDrivableBehaviorsComponent::ReleaseEBrake(){
 	EngineBrake();
 }
 
+/** Refactor Shift Gear Behavior*/
 void UDrivableBehaviorsComponent::ShiftUp() {
-	if (GetTransmission())
+	if (GetTransmission() && GetEngine()) {
+		int32 previousGear = GetTransmission()->GetCurrentGear();
+		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
 		GetTransmission()->GearUp();
+		float gearRatio = GetTransmission()->GetCurrentGearRatio();
+
+		if (previousGear != 0)
+			GetEngine()->OnGearChange(gearRatio, driveShaftRPM);
+	}
 }
 
 void UDrivableBehaviorsComponent::ShiftDown() {
-	if (GetTransmission())
+	if (GetTransmission() && GetEngine()) {
+		int32 previousGear = GetTransmission()->GetCurrentGear();
+		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
 		GetTransmission()->GearDown();
+		float gearRatio = GetTransmission()->GetCurrentGearRatio();
+
+		if (previousGear != 0)
+			GetEngine()->OnGearChange(gearRatio, driveShaftRPM);
+	}
 }

@@ -28,8 +28,5 @@ class DEJAVON_API UDrivableEngineSpecs : public UActorComponent {
 		int32 Torque;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 RPMPotentialAcceleration;
-
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 PotentialBraking;
+		int32 EngineResistance;
 };

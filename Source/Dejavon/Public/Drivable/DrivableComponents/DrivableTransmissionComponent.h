@@ -19,10 +19,13 @@ class DEJAVON_API UDrivableTransmissionComponent : public UActorComponent {
 		virtual void GearDown();
 		virtual void SetGear(int32 Gear);
 
-		virtual float GetPowerOutput(float EngineOutput);
+		virtual float GetDriveshaftRPM(float EngineRPM);
 
 		UFUNCTION(BlueprintCallable, category = "DrivableTransmissionComponent")
 		virtual int32 GetCurrentGear();
+
+		UFUNCTION(BlueprintCallable, category = "DrivableTransmissionComponent")
+		virtual float GetCurrentGearRatio();
 
 		virtual void SetSpecs(class UDrivableTransmissionSpecs* TransmissionSpecs);
 

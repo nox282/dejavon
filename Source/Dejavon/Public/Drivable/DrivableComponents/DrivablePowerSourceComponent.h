@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "DrivablePowerSourceComponent.generated.h"
 
-
 UCLASS( ClassGroup = (DrivableComponent), Blueprintable, meta = (BlueprintSpawnableComponent) )
 class DEJAVON_API UDrivablePowerSourceComponent : public UActorComponent {
 	GENERATED_BODY()
@@ -21,9 +20,11 @@ public:
 	virtual void CloseThrottle();
 
 	virtual void OnBrake(float BrakeInput);
-	virtual void OnGearChange(float NewResistance);
+	virtual void OnGearChange(float NewResistance, float DriveShaftRPM);
+
 
 	virtual float GetPowerOutput();
+	virtual float GetCurrentRPM();
 	
 	virtual void SetSpecs(class UDrivableEngineSpecs* EngineSpecs);
 
@@ -32,16 +33,21 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	int32 MaxRPM;
-	int32 IdleRPM;
-	int32 Torque;
-	int32 RPMPotentialAcceleration;
-	int32 PotentialBraking;
-	
-	int32 CurrentRPM;
-	int32 RPMCurrentAcceleration;
-	float Resistance;
+	float TIRE_DIAMETER;
+	float V_MASS;
 
-	int32 ProcessRPMCurrentAcceleration();
-	int32 ProcessCurrentRPM(int32 ThisFrameRPMAcceleration);
+	float MaxRPM;
+	float IdleRPM;
+	float Torque;
+	float EngineResistance;
+	
+	float CurrentTorque;
+	float CurrentGearRatio;
+
+	float CurrentRPM;
+	
+	//int32 RPMCurrentAcceleration;
+	
+	float ProcessCurrentRPM(float DeltaTime);
+	float ApplyRevLimiter(float RPM);
 };
