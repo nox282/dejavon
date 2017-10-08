@@ -19,14 +19,17 @@ class DEJAVON_API UDrivableEngineSpecs : public UActorComponent {
 		virtual void BeginPlay() override;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 MaxRPM;
+		float MaxRPM;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 IdleRPM;
+		float IdleRPM;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 Torque;
+		float Torque;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
-		int32 EngineResistance;
+		float EngineResistanceFactor;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivablePowerSourceComponent")
+		float V_MASS;
 };

@@ -7,23 +7,24 @@
 UDrivablePowerSourceComponent::UDrivablePowerSourceComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
 	CurrentRPM = IdleRPM;
-	//CurrentTorque = 0.0f;
+	CurrentTorque = 0.0f;
 	CurrentGearRatio = 0.0f;
-
-	TIRE_DIAMETER = 78.74f;
 	V_MASS = 500;
+	EngineResistanceFactor = 3.0f;
 }
 
 void UDrivablePowerSourceComponent::OpenThrottle(float ThrottleInput) {
-	CurrentTorque = Torque * ThrottleInput - EngineResistance/2;
+	CurrentTorque = TC(ThrottleInput, CurrentRPM);
 }
 void UDrivablePowerSourceComponent::CloseThrottle() {
-	CurrentTorque = - EngineResistance;
+	CurrentTorque = - TC(1.0f, CurrentRPM) / EngineResistanceFactor;
 }
 
 void UDrivablePowerSourceComponent::OnBrake(float BrakeInput) {
-
-	CurrentTorque = - (Torque * -BrakeInput + EngineResistance);
+	if (CurrentRPM >= MaxRPM * 0.25f)
+		CurrentTorque = - TC(BrakeInput, CurrentRPM);
+	else 
+		CurrentTorque = -TC(BrakeInput, MaxRPM * 0.25f);
 }
 
 void UDrivablePowerSourceComponent::OnGearChange(float NewGearRatio, float DriveShaftRPM) {
@@ -51,6 +52,9 @@ void UDrivablePowerSourceComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	CurrentRPM = ProcessCurrentRPM(DeltaTime);
 
+	UE_LOG(LogTemp, Warning, TEXT("Current EngineRPM : %f"), CurrentRPM);
+	UE_LOG(LogTemp, Warning, TEXT("Current Torque : %f"), CurrentTorque);
+
 }
 
 float UDrivablePowerSourceComponent::ProcessCurrentRPM(float DeltaTime) {
@@ -63,8 +67,18 @@ void UDrivablePowerSourceComponent::SetSpecs(UDrivableEngineSpecs* EngineSpecs) 
 		MaxRPM = EngineSpecs->MaxRPM;
 		IdleRPM = EngineSpecs->IdleRPM;
 		Torque = EngineSpecs->Torque;
-		EngineResistance = EngineSpecs->EngineResistance;
+
+		EngineResistanceFactor = EngineSpecs->EngineResistanceFactor;
+		if (EngineResistanceFactor == 0) 
+			EngineResistanceFactor = 3.0f;
+
+		V_MASS = EngineSpecs->V_MASS;
+		if (V_MASS == 0)
+			V_MASS = 500.0f;
+
 		CurrentRPM = IdleRPM;
+
+		TC = TorqueCurve(MaxRPM, Torque);
 	} else
 		UE_LOG(LogTemp, Warning, TEXT("Engine Specs not applied (NULL)"));
 }
