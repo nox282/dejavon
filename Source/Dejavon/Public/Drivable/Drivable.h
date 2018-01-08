@@ -36,19 +36,7 @@ public:
 
 	FORCEINLINE class UStaticMeshComponent* GetDrivableMesh() const { return DrivableMesh; }
 
-	FORCEINLINE float GetHorsepower() { return Horsepower; }
-	FORCEINLINE float GetBrakepower() { return Brakepower; }
-	FORCEINLINE float GetMaximumTurnRate() { return MaximumTurnRate; }
-
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drivable", Meta = (BlueprintProtected = "true"))
-	float Horsepower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drivable", Meta = (BlueprintProtected = "true"))
-	float Brakepower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drivable", Meta = (BlueprintProtected = "true"))
-	float MaximumTurnRate;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
