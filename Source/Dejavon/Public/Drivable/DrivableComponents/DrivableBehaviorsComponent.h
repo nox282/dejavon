@@ -40,6 +40,7 @@ protected:
 	virtual class UDrivableMovementComponent* GetMovementComponent();
 	virtual class UDrivablePowerSourceComponent* GetEngine();
 	virtual class UDrivableTransmissionComponent* GetTransmission();
+	virtual void ShiftGear(void (UDrivableTransmissionComponent::*ShiftFunction)());
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
@@ -50,4 +51,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivableTransmissionComponent* Transmission;
+
+	
 };
