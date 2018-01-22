@@ -37,7 +37,7 @@ void ADrivable::HandleDrivableSpecs() {
 		GetBehaviorsComponent()->SetEngineSpecs(engineSpecs);
 
 	UDrivableTransmissionSpecs* transmissionSpecs = this->FindComponentByClass<UDrivableTransmissionSpecs>();
-	if (engineSpecs && GetBehaviorsComponent())
+	if (transmissionSpecs && GetBehaviorsComponent())
 		GetBehaviorsComponent()->SetTransmissionSpecs(transmissionSpecs);
 }
 
