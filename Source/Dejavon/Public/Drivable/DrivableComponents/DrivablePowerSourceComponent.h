@@ -11,8 +11,12 @@ class DEJAVON_API UDrivablePowerSourceComponent : public UActorComponent {
 	GENERATED_BODY()
 
 public:	
+	struct TorqueCurve;
+
 	// Sets default values for this component's properties
 	UDrivablePowerSourceComponent();
+	UDrivablePowerSourceComponent(const TorqueCurve& _TC);
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
@@ -21,7 +25,6 @@ public:
 
 	virtual void OnBrake(float BrakeInput);
 	virtual void OnGearChange(float NewResistance, float DriveShaftRPM);
-
 
 	virtual float GetPowerOutput();
 	virtual float GetCurrentRPM();

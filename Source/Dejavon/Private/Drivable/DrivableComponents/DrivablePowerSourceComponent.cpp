@@ -13,6 +13,11 @@ UDrivablePowerSourceComponent::UDrivablePowerSourceComponent() {
 	EngineResistanceFactor = 3.0f;
 }
 
+UDrivablePowerSourceComponent::UDrivablePowerSourceComponent(const TorqueCurve& _TC) {
+	UDrivablePowerSourceComponent();
+	TC = _TC;
+}
+
 void UDrivablePowerSourceComponent::OpenThrottle(float ThrottleInput) {
 	CurrentTorque = TC(ThrottleInput, CurrentRPM);
 }
