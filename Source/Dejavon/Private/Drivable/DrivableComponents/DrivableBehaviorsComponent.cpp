@@ -22,6 +22,11 @@ void UDrivableBehaviorsComponent::SetTransmissionSpecs(UDrivableTransmissionSpec
 		GetTransmission()->SetSpecs(TransmissionSpecs);
 }
 
+void UDrivableBehaviorsComponent::SetBodyComponent(UDrivableBodyComponent* BodyComponent) {
+	if (BodyComponent)
+		Body = BodyComponent;
+}
+
 
 // Called when the game starts
 void UDrivableBehaviorsComponent::BeginPlay() {
@@ -74,6 +79,10 @@ UDrivableTransmissionComponent* UDrivableBehaviorsComponent::GetTransmission() {
 	return Transmission;
 }
 
+UDrivableBodyComponent * UDrivableBehaviorsComponent::GetBodyComponent() {
+	return Body;
+}
+
 
 void UDrivableBehaviorsComponent::Gas(float ThrottleInput) {
 	if (GetEngine())
@@ -103,7 +112,6 @@ void UDrivableBehaviorsComponent::ReleaseEBrake(){
 } 
 
 void UDrivableBehaviorsComponent::ShiftUp() {
-
 	ShiftGear(&UDrivableTransmissionComponent::GearUp);
 }
 

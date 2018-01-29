@@ -24,6 +24,8 @@ public:
 	virtual void SetEngineSpecs(class UDrivableEngineSpecs* EngineSpecs);
 	virtual void SetTransmissionSpecs(class UDrivableTransmissionSpecs* TransmissionSpecs);
 
+	virtual void SetBodyComponent(class UDrivableBodyComponent* BodyComponent);
+
 	virtual void Gas(float ThrottleInput);
 	virtual void Brake(float BrakeInput);
 	virtual void EngineBrake();
@@ -40,6 +42,9 @@ protected:
 	virtual class UDrivableMovementComponent* GetMovementComponent();
 	virtual class UDrivablePowerSourceComponent* GetEngine();
 	virtual class UDrivableTransmissionComponent* GetTransmission();
+
+	virtual class UDrivableBodyComponent* GetBodyComponent();
+
 	virtual void ShiftGear(void (UDrivableTransmissionComponent::*ShiftFunction)());
 
 private:
@@ -52,5 +57,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivableTransmissionComponent* Transmission;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
+	class UDrivableBodyComponent* Body;
 };
