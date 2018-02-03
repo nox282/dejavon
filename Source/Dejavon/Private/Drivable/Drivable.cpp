@@ -4,7 +4,11 @@
 #include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+
 #include "DrivableBehaviorsComponent.h"
+#include "DrivableBodyComponent.h"
+#include "DrivableWheelComponent.h"
+
 #include "DrivableConfig/DrivableEngineSpecs.h"
 #include "DrivableConfig/DrivableTransmissionSpecs.h"
 
@@ -49,6 +53,28 @@ void ADrivable::BeginPlay() {
 	
 	if (DrivableBehaviors)
 		HandleDrivableSpecs();
+	
+	UDrivableBodyComponent* bodyComponent = this->FindComponentByClass<UDrivableBodyComponent>();
+	TArray<UActorComponent*> wheelComponents = this->GetComponentsByClass(UDrivableWheelComponent::StaticClass());
+	
+	if (bodyComponent) {
+		//UStaticMeshComponent* mesh;
+		for (int i = 0; i < wheelComponents.Num(); i++) {
+			UDrivableWheelComponent* wheel = Cast<UDrivableWheelComponent>(wheelComponents[i]);
+			//mesh = bodyComponent->AttachWheels(wheel);
+			wheel->GetBodyMesh()->AttachToComponent(bodyComponent->GetBodyMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
+		}
+
+		if (bodyComponent && bodyComponent->GetBodyMesh() && bodyComponent->GetBodyMesh()->GetStaticMesh()) {
+			//mesh->RegisterComponentWithWorld(GetWorld());
+			//mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+			//AddOwnedComponent(mesh);
+
+			UE_LOG(LogTemp, Warning, TEXT("Body created!"));
+			//mesh->SetRelativeLocation();
+			DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
+		}
+	}
 }
 
 // Called every frame

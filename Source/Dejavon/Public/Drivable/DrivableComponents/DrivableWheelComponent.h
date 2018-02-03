@@ -7,7 +7,7 @@
 #include "DrivableWheelComponent.generated.h"
 
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (DrivableComponent), Blueprintable, meta = (BlueprintSpawnableComponent))
 class DEJAVON_API UDrivableWheelComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -17,12 +17,22 @@ class DEJAVON_API UDrivableWheelComponent : public UActorComponent
 		UDrivableWheelComponent();
 
 		class UDrivableWheelMovementComponent* GetWheelMovementComponent();
+		UStaticMeshComponent* GetBodyMesh();
+		FName GetSocketName();
 
 	protected:
 		// Called when the game starts
 		virtual void BeginPlay() override;
 
 	private:
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* BodyMesh;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
+		FName SocketName;
+		
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 		UDrivableWheelMovementComponent* WheelMovementComponent;
+
 };

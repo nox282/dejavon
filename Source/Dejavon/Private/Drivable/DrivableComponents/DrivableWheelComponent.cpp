@@ -20,3 +20,11 @@ UDrivableWheelMovementComponent * UDrivableWheelComponent::GetWheelMovementCompo
 void UDrivableWheelComponent::BeginPlay() {
 	Super::BeginPlay();
 }
+
+UStaticMeshComponent* UDrivableWheelComponent::GetBodyMesh() {
+	return BodyMesh;
+}
+
+FName UDrivableWheelComponent::GetSocketName() {
+	return SocketName;
+}

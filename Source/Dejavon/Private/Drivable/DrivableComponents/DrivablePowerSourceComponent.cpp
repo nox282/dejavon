@@ -57,8 +57,8 @@ void UDrivablePowerSourceComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	CurrentRPM = ProcessCurrentRPM(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("Current EngineRPM : %f"), CurrentRPM);
-	UE_LOG(LogTemp, Warning, TEXT("Current Torque : %f"), CurrentTorque);
+	//UE_LOG(LogTemp, Warning, TEXT("Current EngineRPM : %f"), CurrentRPM);
+	//UE_LOG(LogTemp, Warning, TEXT("Current Torque : %f"), CurrentTorque);
 
 }
 

@@ -55,7 +55,7 @@ void UDrivableBehaviorsComponent::TickComponent(float DeltaTime, ELevelTick Tick
 			&& GetTransmission()
 			&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
 		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
-		UE_LOG(LogTemp, Warning, TEXT("DriveShaftRPM: %f"), driveShaftRPM);
+		//UE_LOG(LogTemp, Warning, TEXT("DriveShaftRPM: %f"), driveShaftRPM);
 		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM);
 	}
 }
