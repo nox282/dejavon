@@ -22,7 +22,8 @@ class DEJAVON_API UDrivableBodyComponent : public UActorComponent {
 
 		//virtual void ApplyVector(FVector Vector);
 		
-		virtual void AttachWheels(class ADrivableWheelComponent* wheelReference, FString tag);
+		// Populates DriveWheels and SteeredWheels arrays
+		virtual void AttachWheel(class ADrivableWheelComponent* wheelReference, FString tag);
 
 	protected:
 		// Called when the game starts

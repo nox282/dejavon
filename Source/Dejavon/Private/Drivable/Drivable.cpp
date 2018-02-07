@@ -53,13 +53,14 @@ void ADrivable::HandleBodyComponent() {
 		DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
 
 		UClass* wheelClass = bodyComponent->GetTemplateWheel()->GetDefaultObject()->GetClass();
-		
-		for (int i = 0; i < bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets.Num(); i++) {
+		TArray<UStaticMeshSocket*> sockets = bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets;
+		for (int i = 0; i < sockets.Num(); i++) {
 			ADrivableWheelComponent* wheel = GetWorld()->SpawnActor<ADrivableWheelComponent>(wheelClass, FVector(0, 0, 0), FRotator::ZeroRotator);
 			
 			if (wheel) {
-				wheel->SetSocketName(bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets[i]->SocketName);
+				wheel->SetSocketName(sockets[i]->SocketName);
 				wheel->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
+				bodyComponent->AttachWheel(wheel, sockets[i]->Tag);
 			}
 		}
 	}

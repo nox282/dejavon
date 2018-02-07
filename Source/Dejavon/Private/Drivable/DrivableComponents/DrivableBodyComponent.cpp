@@ -28,7 +28,7 @@ void UDrivableBodyComponent::BeginPlay() {
 	Super::BeginPlay();
 }
 
-void UDrivableBodyComponent::AttachWheels(ADrivableWheelComponent* wheel, FString tag) {
+void UDrivableBodyComponent::AttachWheel(ADrivableWheelComponent* wheel, FString tag) {
 	if (tag.Contains("Steered")) SteeredWheels.Add(wheel);
 	if (tag.Contains("Drive")) DriveWheels.Add(wheel);
 }

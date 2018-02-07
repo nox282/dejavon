@@ -7,7 +7,7 @@
 #include "DrivableWheelComponent.generated.h"
 
 
-UCLASS(ClassGroup = (DrivableComponent), Blueprintable) //, meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (DrivableComponent), Blueprintable)
 class DEJAVON_API ADrivableWheelComponent : public AActor
 {
 	GENERATED_BODY()
