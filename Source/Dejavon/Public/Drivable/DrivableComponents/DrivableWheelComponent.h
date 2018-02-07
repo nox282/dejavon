@@ -7,18 +7,20 @@
 #include "DrivableWheelComponent.generated.h"
 
 
-UCLASS(ClassGroup = (DrivableComponent), Blueprintable, meta = (BlueprintSpawnableComponent))
-class DEJAVON_API UDrivableWheelComponent : public UActorComponent
+UCLASS(ClassGroup = (DrivableComponent), Blueprintable) //, meta = (BlueprintSpawnableComponent))
+class DEJAVON_API ADrivableWheelComponent : public AActor
 {
 	GENERATED_BODY()
 
 	public:
 		// Sets default values for this component's properties
-		UDrivableWheelComponent();
+		ADrivableWheelComponent();
 
 		class UDrivableWheelMovementComponent* GetWheelMovementComponent();
 		UStaticMeshComponent* GetBodyMesh();
 		FName GetSocketName();
+
+		void SetSocketName(FName name);
 
 	protected:
 		// Called when the game starts

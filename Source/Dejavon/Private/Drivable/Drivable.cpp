@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Engine/StaticMeshSocket.h"
 
 #include "DrivableBehaviorsComponent.h"
 #include "DrivableBodyComponent.h"
@@ -45,6 +46,25 @@ void ADrivable::HandleDrivableSpecs() {
 		GetBehaviorsComponent()->SetTransmissionSpecs(transmissionSpecs);
 }
 
+void ADrivable::HandleBodyComponent() {
+	UDrivableBodyComponent* bodyComponent = this->FindComponentByClass<UDrivableBodyComponent>();
+
+	if (bodyComponent && bodyComponent->GetBodyMesh() && bodyComponent->GetTemplateWheel()) {
+		DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
+
+		UClass* wheelClass = bodyComponent->GetTemplateWheel()->GetDefaultObject()->GetClass();
+		
+		for (int i = 0; i < bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets.Num(); i++) {
+			ADrivableWheelComponent* wheel = GetWorld()->SpawnActor<ADrivableWheelComponent>(wheelClass, FVector(0, 0, 0), FRotator::ZeroRotator);
+			
+			if (wheel) {
+				wheel->SetSocketName(bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets[i]->SocketName);
+				wheel->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
+			}
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void ADrivable::BeginPlay() {
 	Super::BeginPlay();
@@ -54,27 +74,7 @@ void ADrivable::BeginPlay() {
 	if (DrivableBehaviors)
 		HandleDrivableSpecs();
 	
-	UDrivableBodyComponent* bodyComponent = this->FindComponentByClass<UDrivableBodyComponent>();
-	TArray<UActorComponent*> wheelComponents = this->GetComponentsByClass(UDrivableWheelComponent::StaticClass());
-	
-	if (bodyComponent) {
-		//UStaticMeshComponent* mesh;
-		for (int i = 0; i < wheelComponents.Num(); i++) {
-			UDrivableWheelComponent* wheel = Cast<UDrivableWheelComponent>(wheelComponents[i]);
-			//mesh = bodyComponent->AttachWheels(wheel);
-			wheel->GetBodyMesh()->AttachToComponent(bodyComponent->GetBodyMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
-		}
-
-		if (bodyComponent && bodyComponent->GetBodyMesh() && bodyComponent->GetBodyMesh()->GetStaticMesh()) {
-			//mesh->RegisterComponentWithWorld(GetWorld());
-			//mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-			//AddOwnedComponent(mesh);
-
-			UE_LOG(LogTemp, Warning, TEXT("Body created!"));
-			//mesh->SetRelativeLocation();
-			DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
-		}
-	}
+	HandleBodyComponent();
 }
 
 // Called every frame

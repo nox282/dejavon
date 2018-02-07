@@ -3,28 +3,42 @@
 #include "DrivableWheelComponent.h"
 #include "DrivableWheelMovementComponent.h"
 
+#include "ConstructorHelpers.h"
 
 // Sets default values for this component's properties
-UDrivableWheelComponent::UDrivableWheelComponent() {
-	PrimaryComponentTick.bCanEverTick = false;
+ADrivableWheelComponent::ADrivableWheelComponent() {
+	//PrimaryComponentTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 
 	WheelMovementComponent = NewObject<UDrivableWheelMovementComponent>();
+
+	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WheelMesh"));
+	RootComponent = BodyMesh;
+	BodyMesh->SetCollisionProfileName(TEXT("UI"));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> wheelVisual(TEXT("/Game/Meshes/Mesh_wheel"));
+	if (wheelVisual.Succeeded())
+		BodyMesh->SetStaticMesh(wheelVisual.Object);
 }
 
 
-UDrivableWheelMovementComponent * UDrivableWheelComponent::GetWheelMovementComponent() {
+UDrivableWheelMovementComponent * ADrivableWheelComponent::GetWheelMovementComponent() {
 	return WheelMovementComponent;
 }
 
 // Called when the game starts
-void UDrivableWheelComponent::BeginPlay() {
+void ADrivableWheelComponent::BeginPlay() {
 	Super::BeginPlay();
 }
 
-UStaticMeshComponent* UDrivableWheelComponent::GetBodyMesh() {
+UStaticMeshComponent* ADrivableWheelComponent::GetBodyMesh() {
 	return BodyMesh;
 }
 
-FName UDrivableWheelComponent::GetSocketName() {
+FName ADrivableWheelComponent::GetSocketName() {
 	return SocketName;
+}
+
+void ADrivableWheelComponent::SetSocketName(FName name) {
+	SocketName = name;
 }

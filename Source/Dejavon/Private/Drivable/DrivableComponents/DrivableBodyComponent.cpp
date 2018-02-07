@@ -10,43 +10,27 @@ UDrivableBodyComponent::UDrivableBodyComponent() {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-/*UDrivableBodyComponent::UDrivableBodyComponent(int32 DriveWheelsCount, int32 SteeredWheelsCount) {
-	PrimaryComponentTick.bCanEverTick = false;
-	
-	DriveCount = DriveWheelsCount;
-	SteeredCount = SteeredWheelsCount;
-}*/
-
-TArray<class UDrivableWheelComponent*> UDrivableBodyComponent::GetDriveWheels() {
+TArray<ADrivableWheelComponent*> UDrivableBodyComponent::GetDriveWheels() {
 	return DriveWheels;
 }
 
-TArray<UDrivableWheelComponent*> UDrivableBodyComponent::GetSteeredWheels() {
+TArray<ADrivableWheelComponent*> UDrivableBodyComponent::GetSteeredWheels() {
 	return SteeredWheels;
 }
+
+TSubclassOf<ADrivableWheelComponent> UDrivableBodyComponent::GetTemplateWheel() {
+	return TemplateWheel;
+}
+
 
 // Called when the game starts
 void UDrivableBodyComponent::BeginPlay() {
 	Super::BeginPlay();
 }
 
-UStaticMeshComponent* UDrivableBodyComponent::AttachWheels(UDrivableWheelComponent* wheel) {
-	if (!GetBodyMesh()) return nullptr;
-	
-	bool isAttached;
-	if (wheel && wheel->GetBodyMesh())
-		isAttached = wheel->GetBodyMesh()->AttachToComponent(GetBodyMesh(), FAttachmentTransformRules::KeepWorldTransform, wheel->GetSocketName());
-	
-	if (isAttached) return GetBodyMesh();
-	else return nullptr;
-}
-
-void UDrivableBodyComponent::SetDriveWheels(class UDrivableWheelComponent* wheels) {
-
-}
-
-void UDrivableBodyComponent::SetSteeredWheels(class UDrivableWheelComponent* wheels) {
-
+void UDrivableBodyComponent::AttachWheels(ADrivableWheelComponent* wheel, FString tag) {
+	if (tag.Contains("Steered")) SteeredWheels.Add(wheel);
+	if (tag.Contains("Drive")) DriveWheels.Add(wheel);
 }
 
 UStaticMeshComponent* UDrivableBodyComponent::GetBodyMesh() {
