@@ -63,6 +63,8 @@ void ADrivable::HandleBodyComponent() {
 				bodyComponent->AttachWheel(wheel, sockets[i]->Tag);
 			}
 		}
+
+		DrivableBehaviors->SetBodyComponent(bodyComponent);
 	}
 }
 

@@ -11,6 +11,7 @@ ADrivableWheelComponent::ADrivableWheelComponent() {
 	PrimaryActorTick.bCanEverTick = true;
 
 	WheelMovementComponent = NewObject<UDrivableWheelMovementComponent>();
+	WheelMovementComponent->RegisterComponent();
 
 	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WheelMesh"));
 	RootComponent = BodyMesh;
@@ -41,4 +42,10 @@ FName ADrivableWheelComponent::GetSocketName() {
 
 void ADrivableWheelComponent::SetSocketName(FName name) {
 	SocketName = name;
+}
+
+void ADrivableWheelComponent::ApplyInput(FVector vector)
+{
+	if (GetWheelMovementComponent())
+		GetWheelMovementComponent()->AddInputVector(vector);
 }

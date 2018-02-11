@@ -19,11 +19,14 @@ class DEJAVON_API UDrivableBodyComponent : public UActorComponent {
 		virtual TArray<class ADrivableWheelComponent*> GetSteeredWheels();
 		virtual UStaticMeshComponent* GetBodyMesh();
 		virtual TSubclassOf<class ADrivableWheelComponent> GetTemplateWheel();
-
-		//virtual void ApplyVector(FVector Vector);
 		
 		// Populates DriveWheels and SteeredWheels arrays
 		virtual void AttachWheel(class ADrivableWheelComponent* wheelReference, FString tag);
+
+		virtual class ADrivable* GetDrivableOwner();
+
+		virtual void ApplyDriveInput(float driveShaftRPM);
+		virtual void ApplySteerInput(float steeringInput);
 
 	protected:
 		// Called when the game starts
@@ -38,4 +41,6 @@ class DEJAVON_API UDrivableBodyComponent : public UActorComponent {
 
 		TArray<class ADrivableWheelComponent*> DriveWheels;
 		TArray<class ADrivableWheelComponent*> SteeredWheels;
+
+		void ApplyInput(TArray<class ADrivableWheelComponent*> wheels, FVector vector);
 };

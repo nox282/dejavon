@@ -16,4 +16,14 @@ class DEJAVON_API UDrivableWheelMovementComponent : public UPawnMovementComponen
 		UDrivableWheelMovementComponent();
 
 		virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+	protected:
+		float MaxWorldSpeed;
+		float StandardFriction;
+
+	private:
+		/** Proccesses this frame's movement vector with standard friction value */
+		virtual FVector GetThisFrameMovementVector(float DeltaTime);
+		/** Proccesses this frame's movement vector with specific friction value */
+		virtual FVector GetThisFrameMovementVector(float DeltaTime, float Friction);
 };

@@ -22,6 +22,8 @@ class DEJAVON_API ADrivableWheelComponent : public AActor
 
 		void SetSocketName(FName name);
 
+		void ApplyInput(FVector vector);
+
 	protected:
 		// Called when the game starts
 		virtual void BeginPlay() override;
@@ -36,5 +38,4 @@ class DEJAVON_API ADrivableWheelComponent : public AActor
 		
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 		UDrivableWheelMovementComponent* WheelMovementComponent;
-
 };

@@ -4,6 +4,8 @@
 #include "DrivableMovementComponent.h"
 #include "DrivablePowerSourceComponent.h"
 #include "DrivableTransmissionComponent.h"
+#include "DrivableBodyComponent.h"
+#include "DrivableSteeringWheelComponent.h"
 #include "Drivable.h"
 
 
@@ -44,19 +46,29 @@ void UDrivableBehaviorsComponent::BeginPlay() {
 
 	Transmission = NewObject<UDrivableTransmissionComponent>(this, TEXT("Transmission"));
 	Transmission->RegisterComponent();
+
+	SteeringWheel = NewObject<UDrivableSteeringWheelComponent>(this, TEXT("Steering Wheel"));
+	SteeringWheel->RegisterComponent();
 }
 
 // Called every frame
 void UDrivableBehaviorsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	if (GetMovementComponent() 
+	/*if (GetMovementComponent() 
 			&& GetDrivableOwner()
 			&& GetTransmission()
 			&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
 		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
 		//UE_LOG(LogTemp, Warning, TEXT("DriveShaftRPM: %f"), driveShaftRPM);
 		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM);
+	}
+	*/
+
+	// Send current driveShaftRPM and steeringInput to bodyComponent
+	if (GetTransmission() && GetBodyComponent() && GetSteeringWheelComponent()) {
+		GetBodyComponent()->ApplyDriveInput(GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM()));
+		GetBodyComponent()->ApplySteerInput(GetSteeringWheelComponent()->GetSteeringInput());
 	}
 }
 
@@ -83,6 +95,10 @@ UDrivableBodyComponent * UDrivableBehaviorsComponent::GetBodyComponent() {
 	return Body;
 }
 
+UDrivableSteeringWheelComponent * UDrivableBehaviorsComponent::GetSteeringWheelComponent() {
+	return SteeringWheel;
+}
+
 
 void UDrivableBehaviorsComponent::Gas(float ThrottleInput) {
 	if (GetEngine())
@@ -100,9 +116,12 @@ void UDrivableBehaviorsComponent::EngineBrake() {
 }
 
 void UDrivableBehaviorsComponent::AddSteeringLock(float SteeringInput){
-	FRotator NewRotation = GetDrivableOwner()->GetActorRotation();
+	/*FRotator NewRotation = GetDrivableOwner()->GetActorRotation();
 	NewRotation.Yaw += SteeringInput;
-	GetDrivableOwner()->SetActorRotation(NewRotation);
+	GetDrivableOwner()->SetActorRotation(NewRotation);*/
+
+	if (GetSteeringWheelComponent())
+		GetSteeringWheelComponent()->SetSteeringInput(SteeringInput);
 }
 void UDrivableBehaviorsComponent::PullEbrake(){
 	Brake(1);
