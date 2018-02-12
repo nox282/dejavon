@@ -22,7 +22,6 @@ ADrivable::ADrivable() {
 	RootComponent = DrivableMesh;
 	DrivableMesh->SetCollisionProfileName(TEXT("Pawn"));
 
-
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
 	DrivableSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("DrivableCameraAttachmentArm"));
 	DrivableSpringArm->SetupAttachment(RootComponent);

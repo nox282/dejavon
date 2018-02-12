@@ -27,6 +27,7 @@ class DEJAVON_API ADrivableWheelComponent : public AActor
 	protected:
 		// Called when the game starts
 		virtual void BeginPlay() override;
+		virtual void Tick(float DeltaTime);
 
 	private:
 

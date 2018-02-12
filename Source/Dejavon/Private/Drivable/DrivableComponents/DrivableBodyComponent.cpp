@@ -42,13 +42,20 @@ ADrivable* UDrivableBodyComponent::GetDrivableOwner() {
 }
 
 void UDrivableBodyComponent::ApplyDriveInput(float driveShaftRPM) {
-	if (GetDrivableOwner())
-		ApplyInput(GetDriveWheels(), GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM);
+	if (GetDrivableOwner()) {
+		FVector v = GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM;
+		UE_LOG(LogTemp, Warning, TEXT("Drive Vector : %s"), *v.ToString());
+		ApplyInput(GetDriveWheels(), v);
+		
+	}
 }
 
 void UDrivableBodyComponent::ApplySteerInput(float steeringInput) {
-	if (GetDrivableOwner())
-		ApplyInput(GetDriveWheels(), GetDrivableOwner()->GetActorRightVector() * steeringInput);
+	if (GetDrivableOwner()) {
+		FVector v = GetDrivableOwner()->GetActorRightVector() * steeringInput;
+		UE_LOG(LogTemp, Warning, TEXT("Steering Vector : %s"), *v.ToString());
+		ApplyInput(GetDriveWheels(), v);
+	}
 }
 
 void UDrivableBodyComponent::ApplyInput(TArray<ADrivableWheelComponent*> wheels, FVector vector) {

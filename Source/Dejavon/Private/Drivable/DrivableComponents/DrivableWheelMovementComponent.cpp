@@ -12,7 +12,7 @@ UDrivableWheelMovementComponent::UDrivableWheelMovementComponent() {
 
 void UDrivableWheelMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	UE_LOG(LogTemp, Warning, TEXT("I am a llama, si."));
 	// Make sure that everything is still valid, and that we are allowed to move.
 	if (!PawnOwner || !UpdatedComponent || ShouldSkipUpdate(DeltaTime)) {
 		return;
@@ -21,6 +21,7 @@ void UDrivableWheelMovementComponent::TickComponent(float DeltaTime, ELevelTick 
 	// Get (and then clear) the movement vector that we set in ACollidingPawn::Tick
 	FVector DesiredMovementThisFrame = GetThisFrameMovementVector(DeltaTime);
 	if (!DesiredMovementThisFrame.IsNearlyZero()) {
+		UE_LOG(LogTemp, Warning, TEXT("Desired movement : %s"), *DesiredMovementThisFrame.ToString());
 		FHitResult Hit;
 		SafeMoveUpdatedComponent(DesiredMovementThisFrame, UpdatedComponent->GetComponentRotation(), true, Hit);
 
