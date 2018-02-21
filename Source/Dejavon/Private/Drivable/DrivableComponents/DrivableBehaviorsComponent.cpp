@@ -1,17 +1,15 @@
 // MIT LicenseCopyright (c) 2017 Nicolas Hamard
 
 #include "DrivableBehaviorsComponent.h"
-#include "DrivableMovementComponent.h"
 #include "DrivablePowerSourceComponent.h"
 #include "DrivableTransmissionComponent.h"
-#include "DrivableBodyComponent.h"
 #include "DrivableSteeringWheelComponent.h"
 #include "Drivable.h"
 
 
 // Sets default values for this component's properties
 UDrivableBehaviorsComponent::UDrivableBehaviorsComponent() {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UDrivableBehaviorsComponent::SetEngineSpecs(UDrivableEngineSpecs* EngineSpecs) {
@@ -24,22 +22,9 @@ void UDrivableBehaviorsComponent::SetTransmissionSpecs(UDrivableTransmissionSpec
 		GetTransmission()->SetSpecs(TransmissionSpecs);
 }
 
-void UDrivableBehaviorsComponent::SetBodyComponent(UDrivableBodyComponent* BodyComponent) {
-	if (BodyComponent)
-		Body = BodyComponent;
-}
-
-
 // Called when the game starts
 void UDrivableBehaviorsComponent::BeginPlay() {
 	Super::BeginPlay();
-
-	MovementComponent = NewObject<UDrivableMovementComponent>(this, TEXT("Movement"));
-	MovementComponent->RegisterComponent();
-	if (GetDrivableOwner())
-		MovementComponent->UpdatedComponent = GetDrivableOwner()->GetRootComponent();
-	else
-		UE_LOG(LogTemp, Warning, TEXT("No owner"));
 
 	Engine = NewObject<UDrivablePowerSourceComponent>(this, TEXT("Engine"));
 	Engine->RegisterComponent();
@@ -51,36 +36,11 @@ void UDrivableBehaviorsComponent::BeginPlay() {
 	SteeringWheel->RegisterComponent();
 }
 
-// Called every frame
-void UDrivableBehaviorsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	/*if (GetMovementComponent() 
-			&& GetDrivableOwner()
-			&& GetTransmission()
-			&& (GetMovementComponent()->UpdatedComponent == GetDrivableOwner()->GetRootComponent())) {
-		float driveShaftRPM = GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
-		//UE_LOG(LogTemp, Warning, TEXT("DriveShaftRPM: %f"), driveShaftRPM);
-		GetMovementComponent()->AddInputVector(GetDrivableOwner()->GetActorForwardVector() * driveShaftRPM);
-	}
-	*/
-
-	// Send current driveShaftRPM and steeringInput to bodyComponent
-	if (GetTransmission() && GetBodyComponent() && GetSteeringWheelComponent()) {
-		GetBodyComponent()->ApplyDriveInput(GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM()));
-		GetBodyComponent()->ApplySteerInput(GetSteeringWheelComponent()->GetSteeringInput());
-	}
-}
-
 ADrivable* UDrivableBehaviorsComponent::GetDrivableOwner() {
 	ADrivable* owner = Cast<ADrivable>(GetOwner());
 	
 	if (owner) return owner;
 	else return NULL;
-}
-
-UDrivableMovementComponent* UDrivableBehaviorsComponent::GetMovementComponent() {
-	return MovementComponent;
 }
 
 UDrivablePowerSourceComponent* UDrivableBehaviorsComponent::GetEngine() {
@@ -91,14 +51,16 @@ UDrivableTransmissionComponent* UDrivableBehaviorsComponent::GetTransmission() {
 	return Transmission;
 }
 
-UDrivableBodyComponent * UDrivableBehaviorsComponent::GetBodyComponent() {
-	return Body;
-}
-
 UDrivableSteeringWheelComponent * UDrivableBehaviorsComponent::GetSteeringWheelComponent() {
 	return SteeringWheel;
 }
 
+float UDrivableBehaviorsComponent::GetPowerDelivery() {
+	if (GetTransmission() && GetEngine())
+		return GetTransmission()->GetDriveshaftRPM(GetEngine()->GetCurrentRPM());
+	else
+		return 0.0f;
+}
 
 void UDrivableBehaviorsComponent::Gas(float ThrottleInput) {
 	if (GetEngine())
@@ -115,18 +77,16 @@ void UDrivableBehaviorsComponent::EngineBrake() {
 		GetEngine()->CloseThrottle();
 }
 
-void UDrivableBehaviorsComponent::AddSteeringLock(float SteeringInput){
-	/*FRotator NewRotation = GetDrivableOwner()->GetActorRotation();
-	NewRotation.Yaw += SteeringInput;
-	GetDrivableOwner()->SetActorRotation(NewRotation);*/
-
+void UDrivableBehaviorsComponent::AddSteeringLock(float SteeringInput) {
 	if (GetSteeringWheelComponent())
 		GetSteeringWheelComponent()->SetSteeringInput(SteeringInput);
 }
-void UDrivableBehaviorsComponent::PullEbrake(){
+
+void UDrivableBehaviorsComponent::PullEbrake() {
 	Brake(1);
 }
-void UDrivableBehaviorsComponent::ReleaseEBrake(){
+
+void UDrivableBehaviorsComponent::ReleaseEBrake() {
 	EngineBrake();
 } 
 

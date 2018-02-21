@@ -45,28 +45,6 @@ void ADrivable::HandleDrivableSpecs() {
 		GetBehaviorsComponent()->SetTransmissionSpecs(transmissionSpecs);
 }
 
-void ADrivable::HandleBodyComponent() {
-	UDrivableBodyComponent* bodyComponent = this->FindComponentByClass<UDrivableBodyComponent>();
-
-	if (bodyComponent && bodyComponent->GetBodyMesh() && bodyComponent->GetTemplateWheel()) {
-		DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
-
-		UClass* wheelClass = bodyComponent->GetTemplateWheel()->GetDefaultObject()->GetClass();
-		TArray<UStaticMeshSocket*> sockets = bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets;
-		for (int i = 0; i < sockets.Num(); i++) {
-			ADrivableWheelComponent* wheel = GetWorld()->SpawnActor<ADrivableWheelComponent>(wheelClass, FVector(0, 0, 0), FRotator::ZeroRotator);
-			
-			if (wheel) {
-				wheel->SetSocketName(sockets[i]->SocketName);
-				wheel->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
-				bodyComponent->AttachWheel(wheel, sockets[i]->Tag);
-			}
-		}
-
-		DrivableBehaviors->SetBodyComponent(bodyComponent);
-	}
-}
-
 // Called when the game starts or when spawned
 void ADrivable::BeginPlay() {
 	Super::BeginPlay();
@@ -75,13 +53,15 @@ void ADrivable::BeginPlay() {
 	
 	if (DrivableBehaviors)
 		HandleDrivableSpecs();
-	
-	HandleBodyComponent();
 }
 
 // Called every frame
 void ADrivable::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	if (GetBehaviorsComponent()) {
+		float powerDelivery = GetBehaviorsComponent()->GetPowerDelivery();
+	}
 }
 
 UDrivableBehaviorsComponent* ADrivable::GetBehaviorsComponent() const {

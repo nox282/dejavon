@@ -58,7 +58,4 @@ private:
 
 	// Sets engine and transmission specs if there are any
 	void HandleDrivableSpecs();
-
-	// Sets the proper body mesh if applicable
-	void HandleBodyComponent();
 };
