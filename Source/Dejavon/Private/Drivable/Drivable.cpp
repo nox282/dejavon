@@ -50,13 +50,15 @@ void ADrivable::BeginPlay() {
 	
 	if (DrivableBehaviors)
 		HandleDrivableSpecs();
-	
-	HandleBodyComponent();
 }
 
 // Called every frame
 void ADrivable::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	if (GetBehaviorsComponent()) {
+		float powerDelivery = GetBehaviorsComponent()->GetPowerDelivery();
+	}
 }
 
 UDrivableBehaviorsComponent* ADrivable::GetBehaviorsComponent() const {

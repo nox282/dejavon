@@ -16,15 +16,12 @@ public:
 	// Sets default values for this component's properties
 	UDrivableBehaviorsComponent();
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	virtual class ADrivable* GetDrivableOwner();
 
 	virtual void SetEngineSpecs(class UDrivableEngineSpecs* EngineSpecs);
 	virtual void SetTransmissionSpecs(class UDrivableTransmissionSpecs* TransmissionSpecs);
 
-	virtual void SetBodyComponent(class UDrivableBodyComponent* BodyComponent);
+	virtual float GetPowerDelivery();
 
 	virtual void Gas(float ThrottleInput);
 	virtual void Brake(float BrakeInput);
@@ -39,27 +36,19 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	virtual class UDrivableMovementComponent* GetMovementComponent();
 	virtual class UDrivablePowerSourceComponent* GetEngine();
 	virtual class UDrivableTransmissionComponent* GetTransmission();
 
-	virtual class UDrivableBodyComponent* GetBodyComponent();
 	virtual class UDrivableSteeringWheelComponent* GetSteeringWheelComponent();
 
 	virtual void ShiftGear(void (UDrivableTransmissionComponent::*ShiftFunction)());
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
-	class UDrivableMovementComponent* MovementComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivablePowerSourceComponent* Engine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivableTransmissionComponent* Transmission;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
-	class UDrivableBodyComponent* Body;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DrivableComponent", Meta = (AllowPrivateAccess = "true"))
 	class UDrivableSteeringWheelComponent* SteeringWheel;

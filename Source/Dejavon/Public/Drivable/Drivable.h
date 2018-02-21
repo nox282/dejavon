@@ -43,7 +43,6 @@ protected:
 
 	virtual class UDrivableBehaviorsComponent* GetBehaviorsComponent() const;
 
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* DrivableMesh;
