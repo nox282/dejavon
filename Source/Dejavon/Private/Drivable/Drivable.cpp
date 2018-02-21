@@ -17,22 +17,6 @@
 ADrivable::ADrivable() {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	DrivableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DrivableMesh"));
-	RootComponent = DrivableMesh;
-	DrivableMesh->SetCollisionProfileName(TEXT("Pawn"));
-
-	// Use a spring arm to give the camera smooth, natural-feeling motion.
-	DrivableSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("DrivableCameraAttachmentArm"));
-	DrivableSpringArm->SetupAttachment(RootComponent);
-	DrivableSpringArm->RelativeRotation = FRotator(-45.f, 0.f, 0.f);
-	DrivableSpringArm->TargetArmLength = 400.0f;
-	DrivableSpringArm->bEnableCameraLag = true;
-	DrivableSpringArm->CameraLagSpeed = 3.0f;
-
-	// Create a camera and attach to our spring arm
-	DrivableCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DrivableCamera"));
-	DrivableCamera->SetupAttachment(DrivableSpringArm, USpringArmComponent::SocketName);
 }
 
 void ADrivable::HandleDrivableSpecs() {
@@ -46,24 +30,15 @@ void ADrivable::HandleDrivableSpecs() {
 }
 
 void ADrivable::HandleBodyComponent() {
-	UDrivableBodyComponent* bodyComponent = this->FindComponentByClass<UDrivableBodyComponent>();
-
-	if (bodyComponent && bodyComponent->GetBodyMesh() && bodyComponent->GetTemplateWheel()) {
-		DrivableMesh->SetStaticMesh(bodyComponent->GetBodyMesh()->GetStaticMesh());
-
-		UClass* wheelClass = bodyComponent->GetTemplateWheel()->GetDefaultObject()->GetClass();
-		TArray<UStaticMeshSocket*> sockets = bodyComponent->GetBodyMesh()->GetStaticMesh()->Sockets;
+	DrivableMesh = this->FindComponentByClass<UStaticMeshComponent>();
+	if (GetDrivableMesh()) {
+		TArray<UStaticMeshSocket*> sockets = GetDrivableMesh()->GetStaticMesh()->Sockets;
 		for (int i = 0; i < sockets.Num(); i++) {
-			ADrivableWheelComponent* wheel = GetWorld()->SpawnActor<ADrivableWheelComponent>(wheelClass, FVector(0, 0, 0), FRotator::ZeroRotator);
-			
-			if (wheel) {
-				wheel->SetSocketName(sockets[i]->SocketName);
-				wheel->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, wheel->GetSocketName());
-				bodyComponent->AttachWheel(wheel, sockets[i]->Tag);
-			}
+			FTransform t = GetDrivableMesh()->GetSocketTransform(sockets[i]->SocketName, ERelativeTransformSpace::RTS_Actor);
+			UE_LOG(LogTemp, Warning, TEXT("Socket Position : %s"), *t.ToString());
+			if (sockets[i]->Tag.Contains("Steered")) SteeredWheels.Add(t);
+			if (sockets[i]->Tag.Contains("Drive")) DriveWheels.Add(t);
 		}
-
-		DrivableBehaviors->SetBodyComponent(bodyComponent);
 	}
 }
 

@@ -43,15 +43,16 @@ protected:
 
 	virtual class UDrivableBehaviorsComponent* GetBehaviorsComponent() const;
 
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* DrivableMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* DrivableSpringArm;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
+	//class USpringArmComponent* DrivableSpringArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* DrivableCamera;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
+	//class UCameraComponent* DrivableCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drivable", meta = (AllowPrivateAccess = "true"))
 	class UDrivableBehaviorsComponent* DrivableBehaviors;
@@ -61,4 +62,7 @@ private:
 
 	// Sets the proper body mesh if applicable
 	void HandleBodyComponent();
+
+	TArray<FTransform> SteeredWheels;
+	TArray<FTransform> DriveWheels;
 };
