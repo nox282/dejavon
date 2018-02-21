@@ -7,8 +7,6 @@
 #include "Engine/StaticMeshSocket.h"
 
 #include "DrivableBehaviorsComponent.h"
-#include "DrivableBodyComponent.h"
-#include "DrivableWheelComponent.h"
 
 #include "DrivableConfig/DrivableEngineSpecs.h"
 #include "DrivableConfig/DrivableTransmissionSpecs.h"
